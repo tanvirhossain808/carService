@@ -1,9 +1,19 @@
 # # Create a new user
-POST http://localhost:3000/auth/signup
+POST http://localhost:3000/auth/signup 
 Content-Type:application/json 
 
 {
-    "email":"tanvir@t.com",
+    "email":"tanvirsssssss@t.com",
+    "password":"string"
+}
+
+### signin with credential
+
+POST http://localhost:3000/auth/signin 
+Content-Type:application/json 
+
+{
+    "email":"tanvidr@t.com",
     "password":"string"
 }
 

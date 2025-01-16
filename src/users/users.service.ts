@@ -8,9 +8,10 @@ export class UsersService {
   constructor(
     @InjectRepository(UserEntity) private repo: Repository<UserEntity>,
   ) {}
-  create(email: string, password: string) {
+  async create(email: string, password: string) {
     const user = this.repo.create({ email, password });
-    return this.repo.save(user);
+    const savedUser = await this.repo.save(user);
+    return savedUser;
   }
   findOne(id: number) {
     return this.repo.findOne({ where: { id } });
