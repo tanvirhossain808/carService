@@ -9,10 +9,12 @@ import {
   Patch,
   Post,
   Query,
+  Session,
   UseInterceptors,
   // UseInterceptors,
   // ClassSerializerInterceptor,
 } from '@nestjs/common';
+
 import { CreateUserDto } from './dtos/create_users.dtos';
 import { UsersService } from './users.service';
 import { UpdateUserTdo } from './dtos/update_user.dtos';
@@ -30,6 +32,14 @@ export class UsersController {
     private userService: UsersService,
     private authService: AuthService,
   ) {}
+  @Get('colors/:color')
+  setColor(@Param('color') color: string, @Session() session: any) {
+    return (session.color = color);
+  }
+  @Get('/color')
+  getColor(@Session() session: any) {
+    return session.color;
+  }
   @Post('/signup')
   createUser(@Body() body: CreateUserDto) {
     return this.authService.signup(body.email, body.password);
