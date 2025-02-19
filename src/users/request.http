@@ -3,7 +3,7 @@ POST http://localhost:3000/auth/signup
 Content-Type:application/json 
 
 {
-    "email":"tanvirsssssss@t.com",
+    "email":"james@t.com",
     "password":"string"
 }
 
@@ -13,16 +13,24 @@ POST http://localhost:3000/auth/signin
 Content-Type:application/json 
 
 {
-    "email":"tanvidr@t.com",
+    "email":"james@t.com",
     "password":"string"
 }
 
+### Get user's information
+
+GET http://localhost:3000/auth/whoami
 ###
 # Find a particular user
 
 GET http://localhost:3000/auth/2
 
+### Sign out
+
+POST http://localhost:3000/auth/signout
+
 ### Find all users with given email
+
 
 GET http://localhost:3000/auth?email=tt@t.com
 ### Delete particular user
@@ -41,7 +49,7 @@ Content-Type:application/json
 
 ### Set a color
 
-GET http://localhost:3000/auth/colors/blue
+GET http://localhost:3000/auth/colors/d
 ### Set a color
 
 ###Get color

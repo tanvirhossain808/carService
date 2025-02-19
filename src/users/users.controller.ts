@@ -24,29 +24,53 @@ import {
 } from 'src/interceptors/serialize.interceptor';
 import { UserDto } from './dtos/user.dtos';
 import { AuthService } from './auth.service';
+import { CurrentUser } from './decoratores/Current-user-decoratores';
+import { CurrentUserInterceptor } from './interceptors/current-user-interceptors';
+import { UserEntity } from './user.entity';
 
 @Controller('auth')
 @serialize(UserDto)
+@UseInterceptors(CurrentUserInterceptor)
 export class UsersController {
   constructor(
     private userService: UsersService,
     private authService: AuthService,
   ) {}
-  @Get('colors/:color')
-  setColor(@Param('color') color: string, @Session() session: any) {
-    return (session.color = color);
-  }
   @Get('/color')
   getColor(@Session() session: any) {
     return session.color;
   }
-  @Post('/signup')
-  createUser(@Body() body: CreateUserDto) {
-    return this.authService.signup(body.email, body.password);
+  @Get('colors/:color')
+  setColor(@Param('color') color: string, @Session() session: any) {
+    return (session.color = color);
   }
-  @Post('signin')
-  signin(@Body() body: CreateUserDto) {
-    return this.authService.signin(body.email, body.password);
+
+  @Post('/signout')
+  async signout(@Session() session: any) {
+    session.userId = null;
+    return [{ message: 'Logged out' }];
+  }
+  // @Get('/whoami')
+  // async getUser(@Session() Session: any) {
+  //   const user = await this.userService.findOne(Session.userId);
+  //   return user;
+  // }
+  @Get('/whoami')
+  async getUser(@CurrentUser() data: UserEntity) {
+    const user = data;
+    return user;
+  }
+  @Post('/signup')
+  async createUser(@Body() body: CreateUserDto, @Session() session: any) {
+    const user = await this.authService.signup(body.email, body.password);
+    session.userId = user.id;
+    return user;
+  }
+  @Post('/signin')
+  async signin(@Body() body: CreateUserDto, @Session() session: any) {
+    const user = await this.authService.signin(body.email, body.password);
+    session.userId = user.id;
+    return user;
   }
   // @UseInterceptors(ClassSerializerInterceptor)
   // @UseInterceptors(new SerializeInterceptor(UserDto))
