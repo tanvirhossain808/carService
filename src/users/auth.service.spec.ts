@@ -3,20 +3,27 @@ import { Test } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { UsersService } from './users.service';
 import { UserEntity } from './user.entity';
-import {
-  BadRequestException,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 describe('AuthService', () => {
   let service: AuthService;
   let fakeUserService: Partial<UsersService>;
   beforeEach(async () => {
+    const users: UserEntity[] = [];
     fakeUserService = {
-      find: () => Promise.resolve([]),
-      create: (email: string, password: string) =>
-        Promise.resolve({ id: 1, email, password } as UserEntity),
+      find: (email: string) => {
+        const filteredUsers = users.filter((user) => user.email === email);
+        return Promise.resolve(filteredUsers);
+      },
+      create: (email: string, password: string) => {
+        const newUser = {
+          id: Math.floor(Math.random() * 999999),
+          email,
+          password,
+        } as UserEntity;
+        users.push(newUser);
+        return Promise.resolve(newUser);
+      },
     };
 
     const module = await Test.createTestingModule({
@@ -43,10 +50,11 @@ describe('AuthService', () => {
     expect(hash).toBeDefined();
   });
   it('Throws and errors if user signup with email that is in use', async () => {
-    fakeUserService.find = () =>
-      Promise.resolve([
-        { id: 1, password: 'password', email: 'a@a.com' } as UserEntity,
-      ]);
+    await service.signup('a@a.com', 'password');
+    // fakeUserService.find = () =>
+    //   Promise.resolve([
+    //     { id: 1, password: 'password', email: 'a@a.com' } as UserEntity,
+    //   ]);
     await expect(service.signup('a@a.com', 'password')).rejects.toThrow(
       BadRequestException,
     );
@@ -67,17 +75,18 @@ describe('AuthService', () => {
   });
 
   it('it return the user if correct password is provided', async () => {
-    fakeUserService.find = () =>
-      Promise.resolve([
-        {
-          id: 1,
-          password:
-            'b35db9be3613c788.be0e5b1e408c64c57c7cea219a0feb08d1aa94e932c6404682746e2ee58d0aff',
-          email: 'ds@a.com',
-        } as UserEntity,
-      ]);
-    const user = await service.signin('a@a.com', 'myPassword');
-    console.log(user, 'sers');
+    await service.signup('t@t.com', 'password');
+    const user = await service.signin('t@t.com', 'password');
+    // return Promise.resolve(user);
+    // Promise.resolve([
+    //   {
+    //     id: 1,
+    //     password:
+    //       'b35db9be3613c788.be0e5b1e408c64c57c7cea219a0feb08d1aa94e932c6404682746e2ee58d0aff',
+    //     email: 'ds@a.com',
+    //   } as UserEntity,
+    // ]);
+    // const user = await service.signin('a@a.com', 'myPassword');
     expect(user).toBeDefined();
 
     // const user = await service.signup('a@a.com', 'myPassword');

@@ -18,10 +18,7 @@ import {
 import { CreateUserDto } from './dtos/create_users.dtos';
 import { UsersService } from './users.service';
 import { UpdateUserTdo } from './dtos/update_user.dtos';
-import {
-  serialize,
-  SerializeInterceptor,
-} from 'src/interceptors/serialize.interceptor';
+import { serialize } from 'src/interceptors/serialize.interceptor';
 import { UserDto } from './dtos/user.dtos';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decoratores/Current-user-decoratores';

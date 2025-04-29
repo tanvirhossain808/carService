@@ -6,7 +6,9 @@ import {
   AfterInsert,
   AfterUpdate,
   AfterRemove,
+  OneToMany,
 } from 'typeorm';
+import { Report } from '../reports/report.entity';
 @Entity()
 export class UserEntity {
   @PrimaryGeneratedColumn()
@@ -17,6 +19,10 @@ export class UserEntity {
 
   @Column()
   password: string;
+
+  @OneToMany(() => Report, (report) => report.user)
+  // eager: true means that when we fetch the user, we also fetch the reports
+  reports: Report[];
 
   @AfterInsert()
   logInsert() {
